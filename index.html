@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>심야식당 길드 운세</title>
+    <style>
+        /* 기본 폰트 설정 */
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
+        
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8eee2;
+            color: #6d5f5a;
+            min-height: 100vh;
+            background-image: linear-gradient(to bottom, #f0d8cd, #f8eee2);
+        }
+        
+        .fortune-container {
+            background-color: #fff9f5;
+            border-radius: 18px;
+            border: 2px solid #ecd3c2;
+            box-shadow: 0 6px 16px rgba(209, 168, 149, 0.25);
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guild-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid #ecd3c2;
+            background-color: #ffeddd;
+            box-shadow: 0 3px 8px rgba(209, 168, 149, 0.2);
+            font-size: 40px;
+        }
+        
+        .guild-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e5846d;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+        }
+        
+        .notice-box {
+            background-color: #ffeee6;
+            border: 1px dashed #e5a292;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            font-size: 14px;
+            color: #9e7a6f;
+            text-align: left;
+        }
+        
+        .notice-title {
+            font-weight: bold;
+            color: #e5846d;
+            margin-bottom: 5px;
+        }
+        
+        .date {
+            color: #b19d95;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+        
+        .emoji {
+            font-size: 48px;
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(255, 214, 189, 0.7);
+        }
+        
+        .fortune-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #e5846d;
+            text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+        
+        .fortune-text {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: #6d5f5a;
+            padding: 0 10px;
+        }
+        
+        .fortune-luck {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ecd3c2;
+        }
+        
+        .luck-item {
+            text-align: center;
+        }
+        
+        .luck-label {
+            font-size: 14px;
+            color: #b19d95;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .luck-value {
+            display: flex;
+            align-items: center;
+        }
+        
+        .star {
+            color: #ffbb8e;
+            font-size: 16px;
+            text-shadow: 0 0 5px rgba(255, 187, 142, 0.5);
+        }
+        
+        .gray-star {
+            color: #e9dbd4;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="fortune-container">
+        <div class="guild-logo">🍜</div>
+        <div class="guild-name">심야식당</div>
+        <div class="notice-box">
+            <div class="notice-title">길드 공지사항</div>
+            <div id="guild-notice">길드 포인트 모으는 중! 매일 최초 접속시 [길드] 메뉴 한번씩 클릭해주세요!</div>
+        </div>
+        <div class="date" id="current-date"></div>
+        <div class="emoji" id="fortune-emoji"></div>
+        <div class="fortune-title" id="fortune-title"></div>
+        <div class="fortune-text" id="fortune-message"></div>
+        <div class="fortune-luck">
+            <div class="luck-item">
+                <div class="luck-label">맛운</div>
+                <div class="luck-value" id="taste-luck"></div>
+            </div>
+            <div class="luck-item">
+                <div class="luck-label">재료운</div>
+                <div class="luck-value" id="ingredient-luck"></div>
+            </div>
+            <div class="luck-item">
+                <div class="luck-label">모험운</div>
+                <div class="luck-value" id="adventure-luck"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 한국어 요일 설정
+        const weekdayKR = ['일', '월', '화', '수', '목', '금', '토'];
+        
+        // 운세 아이콘 목록 (음식 관련)
+        const fortuneEmojis = ['🍰', '🍩', '🍦', '🍜', '🍣', '🥘', '🌮', '🍕', '🍔', '🍲', '🥐', '🍱', '🍧', '🥞', '🍤', '🍪', '🥗', '🥧', '🍫', '🍖'];
+        
+        // 운세 제목 목록
+        const fortuneTitles = [
+            '특별한 요리를 발견하는 날', '맛의 비밀을 깨닫는 날', '보물 같은 재료를 찾는 날', 
+            '행운의 식사를 하는 날', '맛의 영감이 넘치는 날', '별미를 맛보는 날',
+            '새로운 요리법을 배우는 날', '식탁이 풍요로운 날', '달콤한 디저트가 생각나는 날', 
+            '맛의 조화를 이루는 날', '식재료의 신선함이 빛나는 날', '맛의 모험을 떠나는 날',
+            '맛의 감각이 예민해지는 날', '보양식이 필요한 날', '식도락 여행을 떠나는 날',
+            '맛있는 발견이 있는 날', '요리 실력이 빛나는 날', '함께하는 식사가 특별한 날'
+        ];
+        
+        // 운세 메시지 목록
+        const fortuneMessages = [
+            '오늘은 평소 가보지 않은 식당에서 특별한 음식을 발견할 수 있는 날입니다. 새로운 맛의 세계를 탐험해보세요.',
+            '길드원들과 함께하는 식사에서 더 큰 즐거움을 느낄 수 있는 날입니다. 함께 요리하는 활동을 추천합니다.',
+            '오늘 요리하는 음식은 평소보다 더 맛있게 완성될 가능성이 높습니다. 도전적인 레시피에 도전해보세요.',
+            '평소 구하기 어려운 재료가 오늘은 쉽게 손에 들어올 것입니다. 특별한 요리를 준비해보세요.',
+            '식재료 상점에서 오늘 특별한 할인 품목을 발견할 수 있을 것입니다. 방문을 권장합니다.',
+            '오늘의 일일 요리 퀘스트 보상이 평소보다 더 풍성할 것입니다. 모든 요리 관련 퀘스트를 완료하세요.',
+            '오늘은 어려운 요리도 쉽게 성공할 수 있습니다. 고급 요리에 도전해보세요.',
+            '요리 스킬 레벨업 속도가 빨라지는 날입니다. 새로운 요리법 습득에 집중하면 큰 성장을 이룰 수 있습니다.',
+            '식재료 거래소에서 좋은 거래를 성사시킬 수 있는 날입니다. 가격을 잘 비교해보세요.',
+            '오늘 만난 요리사 NPC에게서 특별한 레시피를 배울 수 있습니다. 대화를 많이 나누세요.',
+            '팀 요리 대회에서 좋은 성과를 낼 수 있는 날입니다. 길드원들과 협동해보세요.',
+            '오늘은 평소보다 요리 골드 획득량이 증가합니다. 식당 경영에 집중하면 좋은 결과가 있을 것입니다.',
+            '새로운 요리 스킬을 배우기에 좋은 날입니다. 요리 숙련도가 빠르게 상승합니다.',
+            '숨겨진 맛집을 발견할 수 있는 날입니다. 모험을 떠나보세요.',
+            '길드 요리 기부를 통해 좋은 평판과 보상을 얻을 수 있는 날입니다. 길드에 기여해보세요.',
+            '오늘은 특별한 요리 이벤트 보상이 당신을 기다리고 있습니다. 모든 요리 이벤트에 참여해보세요.',
+            '요리 장비 강화에 행운이 따르는 날입니다. 주방 도구 업그레이드에 도전해보세요.',
+            '오늘 수집한 재료로 만든 음식은 효과가 더 강력할 것입니다. 버프 음식 제작에 집중해보세요.',
+            '요리 대회에서 당신의 실력이 빛을 발할 것입니다. 적극적으로 참여해보세요.',
+            '비밀 레시피 연구에 진전이 있을 것입니다. 레시피 조합 실험을 해보세요.',
+            '음식 품평회에서 높은 점수를 받을 수 있는 날입니다. 자신의 시그니처 요리를 선보이세요.',
+            '새로운 요리 보조 펫이나 도구를 얻기에 좋은 날입니다. 관련 컨텐츠에 참여해보세요.',
+            '오늘 발견한 식재료 상자에는 희귀한 재료가 들어있을 것입니다.',
+            '길드 멤버와 함께하는 식사에서 특별한 버프를 획득할 가능성이 높습니다.',
+            '오늘 만난 식재료 상인이 특별한 거래를 제안할 수 있습니다. 대화를 많이 나누세요.',
+            '오늘은 요리 경매장에서 좋은 거래를 할 수 있는 날입니다. 희귀한 조리도구를 찾아보세요.',
+            '새로운 맛 조합으로 독특한 요리를 발명할 수 있는 날입니다. 창의적인 시도를 해보세요.',
+            '오늘은 평소에 도전하기 어려웠던 고급 요리에 성공할 수 있는 절호의 기회입니다.',
+            '길드 식당에서의 활동이 길드 평판을 크게 올릴 수 있는 날입니다.',
+            '오늘은 요리 성공률이 평소보다 높아 보입니다. 고급 요리 제작에 도전해보세요.'
+        ];
+        
+        // 특정 날짜와 사용자에 기반한 의사 난수 생성
+        function seededRandom(seed) {
+            const m = 2**35 - 31;
+            const a = 185852;
+            let s = seed % m;
+            return function() {
+                return (s = s * a % m) / m;
+            };
+        }
+        
+        // 사용자별 고유 시드 생성 (브라우저 지문 간단 버전)
+        function generateUserSeed() {
+            const platform = navigator.platform || '';
+            const userAgent = navigator.userAgent || '';
+            const language = navigator.language || '';
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            
+            let str = platform + userAgent + language + timeZone;
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash = hash & hash; // 32비트 정수로 변환
+            }
+            return Math.abs(hash);
+        }
+        
+        // 별점 표시 생성
+        function generateStars(count) {
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                if (i < count) {
+                    stars += '<span class="star">★</span>';
+                } else {
+                    stars += '<span class="gray-star">★</span>';
+                }
+            }
+            return stars;
+        }
+        
+        // 오늘의 운세 생성 및 표시
+        function generateFortune() {
+            const today = new Date();
+            const dateString = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 ${weekdayKR[today.getDay()]}요일`;
+            
+            // 날짜 시드 생성 (년, 월, 일 조합)
+            const dateSeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            
+            // 사용자 시드 생성
+            const userSeed = generateUserSeed();
+            
+            // 최종 시드 생성 (날짜 + 사용자)
+            const finalSeed = dateSeed + userSeed;
+            
+            // 시드 기반 랜덤 함수 생성
+            const random = seededRandom(finalSeed);
+            
+            // 이모지, 제목, 메시지 무작위 선택
+            const emoji = fortuneEmojis[Math.floor(random() * fortuneEmojis.length)];
+            const title = fortuneTitles[Math.floor(random() * fortuneTitles.length)];
+            const message = fortuneMessages[Math.floor(random() * fortuneMessages.length)];
+            
+            // 운 점수 생성 (1-5)
+            const tasteLuck = Math.floor(random() * 5) + 1;
+            const ingredientLuck = Math.floor(random() * 5) + 1;
+            const adventureLuck = Math.floor(random() * 5) + 1;
+            
+            // HTML 요소 업데이트
+            document.getElementById('current-date').innerText = dateString;
+            document.getElementById('fortune-emoji').innerText = emoji;
+            document.getElementById('fortune-title').innerText = title;
+            document.getElementById('fortune-message').innerText = message;
+            document.getElementById('taste-luck').innerHTML = generateStars(tasteLuck);
+            document.getElementById('ingredient-luck').innerHTML = generateStars(ingredientLuck);
+            document.getElementById('adventure-luck').innerHTML = generateStars(adventureLuck);
+        }
+        
+        // 페이지 로드 시 운세 생성
+        window.onload = generateFortune;
+    </script>
+</body>
+</html>
