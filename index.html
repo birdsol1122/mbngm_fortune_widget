@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" style="background: transparent;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="transparent">
     <title>심야식당 길드 운세</title>
     <style>
         /* 기본 폰트 설정 */
@@ -16,14 +17,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: #f8eee2;
+            background-color: transparent;
             color: #6d5f5a;
             min-height: 100vh;
-            background-image: linear-gradient(to bottom, #f0d8cd, #f8eee2);
+            background-image: none;
         }
         
         .fortune-container {
-            background-color: #fff9f5;
+            background-color: rgba(255, 249, 245, 0.8);
             border-radius: 18px;
             border: 2px solid #ecd3c2;
             box-shadow: 0 6px 16px rgba(209, 168, 149, 0.25);
@@ -33,6 +34,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(5px);
         }
         
         .guild-logo {
@@ -58,7 +60,7 @@
         }
         
         .notice-box {
-            background-color: #ffeee6;
+            background-color: rgba(255, 238, 230, 0.7);
             border: 1px dashed #e5a292;
             border-radius: 8px;
             padding: 12px;
@@ -66,6 +68,7 @@
             font-size: 14px;
             color: #9e7a6f;
             text-align: left;
+            backdrop-filter: blur(3px);
         }
         
         .notice-title {
