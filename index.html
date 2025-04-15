@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ko" style="background: transparent;">
+<html lang="ko" style="background: transparent; height: auto; overflow-y: auto;">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, height=device-height">
     <meta name="theme-color" content="transparent">
     <title>심야식당 길드 운세</title>
     <style>
@@ -12,16 +12,18 @@
         body {
             font-family: 'Dongle', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             background-color: transparent;
             color: #6d5f5a;
-            min-height: 100vh;
+            min-height: auto;
+            height: auto;
             background-image: none;
-            font-size: 18px; /* Dongle 폰트는 크기가 작아 보일 수 있어 기본 크기 증가 */
+            font-size: 18px;
+            overflow-y: auto;
         }
         
         .fortune-container {
@@ -29,13 +31,14 @@
             border-radius: 18px;
             border: 2px solid #ecd3c2;
             box-shadow: 0 6px 16px rgba(209, 168, 149, 0.25);
-            padding: 24px;
-            width: 90%;
+            padding: 20px;
+            width: 92%;
             max-width: 500px;
             text-align: center;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             backdrop-filter: blur(5px);
+            margin: 10px auto;
         }
         
         .guild-logo {
@@ -102,11 +105,11 @@
         }
         
         .fortune-text {
-            font-size: 24px;
-            line-height: 1.3;
-            margin-bottom: 20px;
+            font-size: 22px;
+            line-height: 1.2;
+            margin-bottom: 18px;
             color: #6d5f5a;
-            padding: 0 10px;
+            padding: 0 5px;
         }
         
         .fortune-luck {
@@ -174,6 +177,17 @@
     </div>
 
     <script>
+        // 화면 크기 조정 함수
+        function adjustHeight() {
+            // 컨텐츠 높이에 맞게 iframe 높이 설정 (노션에서 사용될 경우)
+            if (window.parent && window.parent !== window) {
+                setTimeout(function() {
+                    const height = document.body.scrollHeight;
+                    window.parent.postMessage({ type: 'resize', height: height }, '*');
+                }, 300);
+            }
+        }
+        
         // 한국어 요일 설정
         const weekdayKR = ['일', '월', '화', '수', '목', '금', '토'];
         
@@ -301,7 +315,13 @@
         }
         
         // 페이지 로드 시 운세 생성
-        window.onload = generateFortune;
+        window.onload = function() {
+            generateFortune();
+            adjustHeight();
+        };
+        
+        // 창 크기 변경 시 높이 조정
+        window.addEventListener('resize', adjustHeight);
     </script>
 </body>
 </html>
